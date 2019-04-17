@@ -29,6 +29,3 @@ def developer():
 def language():
     languages = requests.get(TRENDING_URL + LANGUAGES).json()
     return str(languages)
-
-if __name__ == '__main__':
-    app.run()
