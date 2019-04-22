@@ -2,8 +2,6 @@
 
 set -e
 
-IMAGE_NAME=gitter-server
+IMAGE_NAME=callmehan/gitter-server
 
-docker build -t $IMAGE_NAME .
-
-docker run --rm -d -p 5000:5000 $IMAGE_NAME
+docker build -t $IMAGE_NAME:2 .
