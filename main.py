@@ -11,6 +11,7 @@ DEVELOPERS = '/developers'
 LANGUAGES = '/languages'
 
 REPOSITORY = '/repository/<path:path>'
+CONTENTS = '/repository/<path:path>/contents'
 
 TRENDING_URL = 'https://github-trending-api.now.sh'
 GITHUB_API_URL = 'https://api.github.com'
@@ -21,9 +22,9 @@ HEADER = {'Content-Type': 'application/json'}
 AUTHORIZATION = {'Authorization': 'Basic bWlycm9yaGFueXU6YjdlNTE0NzAzMWU0YTEyNmM0OTQyMjZhZWRiNzk5Y2EwYTEzMmM1Ng=='}
 
 
-@app.route("/")
+@app.route('/')
 def hello():
-    return "Hello World!"
+    return 'Hello World!'
 
 
 @app.route(REPOSITORIES)
@@ -48,10 +49,16 @@ def language():
 
 @app.route(REPOSITORY)
 def repo(path):
-    repository = requests.get(GITHUB_API_URL + "/repos/" + path).json()
-    readme = requests.get(GITHUB_RAW_URL + "/" + path + "/master/README.md").text
+    repository = requests.get(GITHUB_API_URL + '/repos/' + path, headers=AUTHORIZATION).json()
+    readme = requests.get(GITHUB_RAW_URL + '/' + path + '/master/README.md').text
     repository.update({'readme': readme})
-    return json.dumps(repository), HTTPStatus.OK, dict(HEADER, **AUTHORIZATION)
+    return json.dumps(repository), HTTPStatus.OK, HEADER
+
+
+@app.route(CONTENTS)
+def content(path):
+    content = requests.get(GITHUB_API_URL + '/repos/' + path + '/contents', headers=AUTHORIZATION).text
+    return content, HTTPStatus.OK, HEADER
 
 
 if __name__ == '__main__':
