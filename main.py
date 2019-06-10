@@ -12,6 +12,7 @@ LANGUAGES = '/languages'
 
 REPOSITORY = '/repository/<path:path>'
 CONTENTS = '/repository/<path:path>/contents'
+DEVELOPER = '/developer/<string:name>'
 
 TRENDING_URL = 'https://github-trending-api.now.sh'
 GITHUB_API_URL = 'https://api.github.com'
@@ -59,6 +60,12 @@ def repo(path):
 def content(path):
     content = requests.get(GITHUB_API_URL + '/repos/' + path + '/contents', headers=AUTHORIZATION).text
     return content, HTTPStatus.OK, HEADER
+
+
+@app.route(DEVELOPER)
+def author(name):
+    user = requests.get(GITHUB_API_URL + '/users/' + name).text
+    return user, HTTPStatus.OK, HEADER
 
 
 if __name__ == '__main__':
