@@ -71,7 +71,7 @@ def author(name):
 
 
 @app.route(EVENTS)
-def events():
+def events(name):
     events = requests.get(GITHUB_API_URL + request.full_path, headers=AUTHORIZATION).text
     return events, HTTPStatus.OK, HEADER
 
