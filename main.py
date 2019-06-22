@@ -9,6 +9,7 @@ app = Flask(__name__)
 REPOSITORIES = '/repositories'
 DEVELOPERS = '/developers'
 LANGUAGES = '/languages'
+USER = '/user'
 
 REPOSITORY = '/repository/<path:path>'
 CONTENTS = '/repository/<path:path>/contents'
@@ -22,7 +23,7 @@ GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
 
 HEADER = {'Content-Type': 'application/json'}
 # This key is for temporary use, should be deleted
-AUTHORIZATION = {'Authorization': 'Basic bWlycm9yaGFueXU6YjdlNTE0NzAzMWU0YTEyNmM0OTQyMjZhZWRiNzk5Y2EwYTEzMmM1Ng=='}
+AUTHORIZATION = {'Authorization': 'Bearer 8046180301de3390aac9c7407e72918a8c5f3b98'}
 
 
 @app.route('/')
@@ -80,6 +81,12 @@ def events(name):
 def search():
     search = requests.get(GITHUB_API_URL + request.full_path, headers=AUTHORIZATION).text
     return search, HTTPStatus.OK, HEADER
+
+
+@app.route(USER)
+def user():
+    user = requests.get(GITHUB_API_URL + USER, headers={'Authorization': request.headers['Authorization']}).text
+    return user, HTTPStatus.OK, HEADER
 
 
 if __name__ == '__main__':
