@@ -13,6 +13,8 @@ LANGUAGES = '/languages'
 REPOSITORY = '/repository/<path:path>'
 CONTENTS = '/repository/<path:path>/contents'
 DEVELOPER = '/developer/<string:name>'
+EVENTS = '/users/<string:name>/received_events'
+SEARCH = '/search/repositories'
 
 TRENDING_URL = 'https://github-trending-api.now.sh'
 GITHUB_API_URL = 'https://api.github.com'
@@ -64,8 +66,20 @@ def content(path):
 
 @app.route(DEVELOPER)
 def author(name):
-    user = requests.get(GITHUB_API_URL + '/users/' + name).text
+    user = requests.get(GITHUB_API_URL + '/users/' + name, headers=AUTHORIZATION).text
     return user, HTTPStatus.OK, HEADER
+
+
+@app.route(EVENTS)
+def events():
+    events = requests.get(GITHUB_API_URL + request.full_path, headers=AUTHORIZATION).text
+    return events, HTTPStatus.OK, HEADER
+
+
+@app.route(SEARCH)
+def search():
+    search = requests.get(GITHUB_API_URL + request.full_path, headers=AUTHORIZATION).text
+    return search, HTTPStatus.OK, HEADER
 
 
 if __name__ == '__main__':
