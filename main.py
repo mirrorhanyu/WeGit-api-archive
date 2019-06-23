@@ -22,9 +22,6 @@ GITHUB_API_URL = 'https://api.github.com'
 GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
 
 HEADER = {'Content-Type': 'application/json'}
-# This key is for temporary use, should be deleted
-AUTHORIZATION = {'Authorization': 'Bearer 8046180301de3390aac9c7407e72918a8c5f3b98'}
-
 
 @app.route('/')
 def hello():
@@ -53,7 +50,7 @@ def language():
 
 @app.route(REPOSITORY)
 def repo(path):
-    repository = requests.get(GITHUB_API_URL + '/repos/' + path, headers=AUTHORIZATION).json()
+    repository = requests.get(GITHUB_API_URL + '/repos/' + path, headers={'Authorization': request.headers['Authorization']}).json()
     readme = requests.get(GITHUB_RAW_URL + '/' + path + '/master/README.md').text
     repository.update({'readme': readme})
     return json.dumps(repository), HTTPStatus.OK, HEADER
@@ -61,25 +58,25 @@ def repo(path):
 
 @app.route(CONTENTS)
 def content(path):
-    content = requests.get(GITHUB_API_URL + '/repos/' + path + '/contents', headers=AUTHORIZATION).text
+    content = requests.get(GITHUB_API_URL + '/repos/' + path + '/contents', headers={'Authorization': request.headers['Authorization']}).text
     return content, HTTPStatus.OK, HEADER
 
 
 @app.route(DEVELOPER)
 def author(name):
-    user = requests.get(GITHUB_API_URL + '/users/' + name, headers=AUTHORIZATION).text
+    user = requests.get(GITHUB_API_URL + '/users/' + name, headers={'Authorization': request.headers['Authorization']}).text
     return user, HTTPStatus.OK, HEADER
 
 
 @app.route(EVENTS)
 def events(name):
-    events = requests.get(GITHUB_API_URL + request.full_path, headers=AUTHORIZATION).text
+    events = requests.get(GITHUB_API_URL + request.full_path, headers={'Authorization': request.headers['Authorization']}).text
     return events, HTTPStatus.OK, HEADER
 
 
 @app.route(SEARCH)
 def search():
-    search = requests.get(GITHUB_API_URL + request.full_path, headers=AUTHORIZATION).text
+    search = requests.get(GITHUB_API_URL + request.full_path, headers={'Authorization': request.headers['Authorization']}).text
     return search, HTTPStatus.OK, HEADER
 
 
