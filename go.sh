@@ -7,7 +7,7 @@ function setUp {
     rm -rf ${VIRTUAL_ENV}
     virtualenv ${VIRTUAL_ENV} --python=python3
     source ${VIRTUAL_ENV}/bin/activate
-    pip3 install -r requirments.txt
+    pip3 install -r requirements.txt
 }
 
 
