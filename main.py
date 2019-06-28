@@ -8,6 +8,8 @@ from database_initializer import DatabaseInitializer
 import datebase_engine as db
 
 # An instance of this Flask class will be our WSGI application.
+from database_migration import migrate
+
 app = Flask(__name__)
 
 REPOSITORIES = '/repositories'
@@ -97,4 +99,5 @@ def user():
 
 
 if __name__ == '__main__':
+    migrate()
     app.run()

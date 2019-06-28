@@ -1,6 +1,6 @@
 from sqlalchemy import create_engine, pool
 
-from settings import settings
+from database_helper import get_database_url
 
 
 class DatabaseEngine:
@@ -25,11 +25,3 @@ def _create_database_engine():
 
 def close_database_engine(engine):
     engine.dispose()
-
-
-def get_database_url():
-    username = settings.database_username
-    password = settings.database_password
-    endpoint = settings.database_endpoint
-    db_name = settings.db_name
-    return "postgresql://%s:%s@%s/%s" % (username, password, endpoint, db_name)
