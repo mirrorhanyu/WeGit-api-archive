@@ -3,6 +3,10 @@ from http import HTTPStatus
 import requests
 import json
 
+from database_initializer import DatabaseInitializer
+
+import datebase_engine as db
+
 # An instance of this Flask class will be our WSGI application.
 app = Flask(__name__)
 
@@ -23,8 +27,14 @@ GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
 
 HEADER = {'Content-Type': 'application/json'}
 
+
 @app.route('/')
 def hello():
+    engine = db.create_database_engine()
+    DatabaseInitializer.initialize_session(engine)
+    session = DatabaseInitializer.session
+    DatabaseInitializer.initialize_session(engine)
+    db.close_database_engine(engine)
     return 'Hello World!'
 
 
