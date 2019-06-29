@@ -3,7 +3,7 @@ from flask import request, Blueprint
 
 import database.datebase_engine as db
 from database.database_initializer import DatabaseInitializer
-from models.account import Account
+from database.models.account import Account
 from settings import settings
 
 developer_api = Blueprint('developer', __name__)

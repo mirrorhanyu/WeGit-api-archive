@@ -3,7 +3,7 @@ from flask import Blueprint, request
 
 import database.datebase_engine as db
 from database.database_initializer import DatabaseInitializer
-from models.account import Account
+from database.models.account import Account
 from settings import settings
 
 search_api = Blueprint('search', __name__)
