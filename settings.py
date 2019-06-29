@@ -11,5 +11,9 @@ class Settings(object):
         self.DATABASE_MIGRATION = 'migration'
         self.DATABASE_MIGRATION_NAME = 'gitter-server'
 
+        self.GITHUB_TRENDING_HOST = 'https://github-trending-api.now.sh'
+        self.GITHUB_API_URL = 'https://api.github.com'
+        self.GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
+
 
 settings = Settings()

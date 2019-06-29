@@ -1,102 +1,30 @@
-from flask import Flask, request
-from http import HTTPStatus
 import requests
-import json
+from flask import Flask
 
-from database_initializer import DatabaseInitializer
-
-import datebase_engine as db
-
-# An instance of this Flask class will be our WSGI application.
 from database_migration import migrate
-from models.account import Account
+from rest.developer import developer_api
+from rest.language import language_api
+from rest.repository import repository_api
+from rest.search import search_api
 
 app = Flask(__name__)
 
-REPOSITORIES = '/repositories'
-DEVELOPERS = '/developers'
-LANGUAGES = '/languages'
-USER = '/user'
 
-REPOSITORY = '/repository/<path:path>'
-CONTENTS = '/repository/<path:path>/contents'
-DEVELOPER = '/developer/<string:name>'
-EVENTS = '/users/<string:name>/received_events'
-SEARCH = '/search/repositories'
-
-TRENDING_URL = 'https://github-trending-api.now.sh'
-GITHUB_API_URL = 'https://api.github.com'
-GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
-
-HEADER = {'Content-Type': 'application/json'}
+@app.errorhandler(requests.exceptions.RequestException)
+def handler_requests_exceptions(error):
+    return 'Oops, something went wrong', 500
 
 
-@app.route('/')
-def hello():
-    engine = db.create_database_engine()
-    with DatabaseInitializer(engine) as session:
-        account = session.query(Account).first()
-        return account.token
-
-
-@app.route(REPOSITORIES)
-def repository():
-    params = request.url.split(REPOSITORIES)[1]
-    repositories = requests.get(TRENDING_URL + REPOSITORIES + params).text
-    return repositories, HTTPStatus.OK, HEADER
-
-
-@app.route(DEVELOPERS)
-def developer():
-    params = request.url.split(DEVELOPERS)[1]
-    developers = requests.get(TRENDING_URL + DEVELOPERS + params).text
-    return developers, HTTPStatus.OK, HEADER
-
-
-@app.route(LANGUAGES)
-def language():
-    languages = requests.get(TRENDING_URL + LANGUAGES).text
-    return languages, HTTPStatus.OK, HEADER
-
-
-@app.route(REPOSITORY)
-def repo(path):
-    repository = requests.get(GITHUB_API_URL + '/repos/' + path, headers={'Authorization': request.headers['Authorization']}).json()
-    readme = requests.get(GITHUB_RAW_URL + '/' + path + '/master/README.md').text
-    repository.update({'readme': readme})
-    return json.dumps(repository), HTTPStatus.OK, HEADER
-
-
-@app.route(CONTENTS)
-def content(path):
-    content = requests.get(GITHUB_API_URL + '/repos/' + path + '/contents', headers={'Authorization': request.headers['Authorization']}).text
-    return content, HTTPStatus.OK, HEADER
-
-
-@app.route(DEVELOPER)
-def author(name):
-    user = requests.get(GITHUB_API_URL + '/users/' + name, headers={'Authorization': request.headers['Authorization']}).text
-    return user, HTTPStatus.OK, HEADER
-
-
-@app.route(EVENTS)
-def events(name):
-    events = requests.get(GITHUB_API_URL + request.full_path, headers={'Authorization': request.headers['Authorization']}).text
-    return events, HTTPStatus.OK, HEADER
-
-
-@app.route(SEARCH)
-def search():
-    search = requests.get(GITHUB_API_URL + request.full_path, headers={'Authorization': request.headers['Authorization']}).text
-    return search, HTTPStatus.OK, HEADER
-
-
-@app.route(USER)
-def user():
-    user = requests.get(GITHUB_API_URL + USER, headers={'Authorization': request.headers['Authorization']}).text
-    return user, HTTPStatus.OK, HEADER
+@app.after_request
+def apply_headers_and_status_code(response):
+    response.headers['Content-Type'] = 'application/json'
+    return response
 
 
 if __name__ == '__main__':
     migrate()
+    app.register_blueprint(developer_api)
+    app.register_blueprint(repository_api)
+    app.register_blueprint(language_api)
+    app.register_blueprint(search_api)
     app.run()
