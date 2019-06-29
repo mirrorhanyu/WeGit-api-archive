@@ -1,7 +1,7 @@
 import requests
 from flask import Flask
 
-from database_migration import migrate
+from database.database_migration import migrate
 from rest.developer import developer_api
 from rest.language import language_api
 from rest.repository import repository_api

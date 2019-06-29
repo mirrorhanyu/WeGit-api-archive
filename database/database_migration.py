@@ -2,7 +2,7 @@ import os
 
 from migrate.versioning import api
 
-from database_helper import get_database_url
+from database.database_helper import get_database_url
 from settings import settings
 
 

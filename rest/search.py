@@ -1,8 +1,8 @@
 import requests
 from flask import Blueprint, request
 
-import datebase_engine as db
-from database_initializer import DatabaseInitializer
+import database.datebase_engine as db
+from database.database_initializer import DatabaseInitializer
 from models.account import Account
 from settings import settings
 
