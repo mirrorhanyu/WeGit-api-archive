@@ -18,10 +18,5 @@ def create_database_engine():
 
 
 def _create_database_engine():
-    engine = create_engine(get_database_url(), echo=False, pool_size=0, connect_args={'sslmode': 'require'},
-                           poolclass=pool.QueuePool)
+    engine = create_engine(get_database_url(), echo=False, pool_size=0, poolclass=pool.QueuePool)
     return engine
-
-
-def close_database_engine(engine):
-    engine.dispose()
