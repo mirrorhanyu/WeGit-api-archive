@@ -15,5 +15,7 @@ class Settings(object):
         self.GITHUB_API_URL = 'https://api.github.com'
         self.GITHUB_RAW_URL = 'https://raw.githubusercontent.com'
 
+        self.NOTIFICATION_SLACK_ALERT = os.environ.get('NOTIFICATION_SLACK_ALERT')
+
 
 settings = Settings()
