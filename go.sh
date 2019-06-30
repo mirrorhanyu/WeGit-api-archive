@@ -13,6 +13,7 @@ function setUp {
 function migrate {
     url="postgresql://${DATABASE_USERNAME}:${DATABASE_PASSWORD}@${DATABASE_ENDPOINT}/${DATABASE_NAME}"
     repository="migration"
+    python migration/manage.py version_control ${url} ${repository} || pass
     python migration/manage.py upgrade ${url} ${repository}
 }
 
