@@ -1,7 +1,6 @@
 from flask import Flask
 
 import notifications.alter as alter
-from database.database_migration import migrate
 from rest.developer import developer_api
 from rest.language import language_api
 from rest.repository import repository_api
@@ -23,7 +22,6 @@ def apply_headers_and_status_code(response):
 
 
 if __name__ == '__main__':
-    migrate()
     app.register_blueprint(developer_api)
     app.register_blueprint(repository_api)
     app.register_blueprint(language_api)
