@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 @app.errorhandler(Exception)
 def handler_requests_exceptions(error):
-    alter.to_slack({'text': 'Exception: {}'.format(error.args[0])})
+    alter.to_slack({'text': 'Exception: {}'.format(error)})
     return 'Oops, something went wrong', 500
 
 
