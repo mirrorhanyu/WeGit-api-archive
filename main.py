@@ -1,6 +1,3 @@
-import json
-
-import requests
 from flask import Flask
 
 import notifications.alter as alter
@@ -13,9 +10,9 @@ from rest.search import search_api
 app = Flask(__name__)
 
 
-@app.errorhandler(requests.exceptions.RequestException)
+@app.errorhandler(Exception)
 def handler_requests_exceptions(error):
-    alter.to_slack(json.dumps({'text': 'RequestException: {}'.format(error.args[0])}))
+    alter.to_slack({'text': 'Exception: {}'.format(error.args[0])})
     return 'Oops, something went wrong', 500
 
 
