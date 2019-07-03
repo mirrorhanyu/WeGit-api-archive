@@ -5,8 +5,14 @@ from rest.developer import developer_api
 from rest.language import language_api
 from rest.repository import repository_api
 from rest.search import search_api
+from rest.health_check import health_check_api
 
 app = Flask(__name__)
+app.register_blueprint(health_check_api)
+app.register_blueprint(developer_api)
+app.register_blueprint(repository_api)
+app.register_blueprint(language_api)
+app.register_blueprint(search_api)
 
 
 @app.errorhandler(Exception)
@@ -22,8 +28,4 @@ def apply_headers_and_status_code(response):
 
 
 if __name__ == '__main__':
-    app.register_blueprint(developer_api)
-    app.register_blueprint(repository_api)
-    app.register_blueprint(language_api)
-    app.register_blueprint(search_api)
     app.run()
