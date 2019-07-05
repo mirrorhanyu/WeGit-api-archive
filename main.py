@@ -2,10 +2,10 @@ from flask import Flask
 
 import notifications.alter as alter
 from rest.developer import developer_api
+from rest.health_check import health_check_api
 from rest.language import language_api
 from rest.repository import repository_api
 from rest.search import search_api
-from rest.health_check import health_check_api
 
 app = Flask(__name__)
 app.register_blueprint(health_check_api)

@@ -3,9 +3,7 @@ import json
 import requests
 from flask import request, Blueprint
 
-import database.datebase_engine as db
-from database.database_initializer import DatabaseInitializer
-from database.models.account import Account
+from decorators.require_token import require_token
 from settings import settings
 
 repository_api = Blueprint('repository', __name__)
@@ -20,23 +18,12 @@ def fetch_trending_repositories():
 
 
 @repository_api.route('/repositories')
-def fetch_repository_by_owner_and_repo_name():
+@require_token
+def fetch_repository_by_owner_and_repo_name(token):
     owner = request.args.get('owner')
     name = request.args.get('name')
-    token = _get_token(request.headers)
     repository = requests.get('{}/{}/{}/{}'.format(settings.GITHUB_API_URL, 'repos', owner, name),
                               headers={'Authorization': 'token {}'.format(token)}).json()
     readme = requests.get('{}/{}/{}/master/README.md'.format(settings.GITHUB_RAW_URL, owner, name)).text
     repository.update({'readme': readme})
     return json.dumps(repository)
-
-
-def _get_token(request_headers):
-    token = request_headers.get('Authorization')
-    if token is None:
-        engine = db.create_database_engine()
-        with DatabaseInitializer(engine) as session:
-            account = session.query(Account).first()
-            return account.token
-    else:
-        return token

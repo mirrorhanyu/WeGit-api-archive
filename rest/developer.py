@@ -1,9 +1,7 @@
 import requests
 from flask import request, Blueprint
 
-import database.datebase_engine as db
-from database.database_initializer import DatabaseInitializer
-from database.models.account import Account
+from decorators.require_token import require_token
 from settings import settings
 
 developer_api = Blueprint('developer', __name__)
@@ -28,16 +26,16 @@ def fetch_developer():
 
 
 @developer_api.route('/developers/<string:name>/events')
-def fetch_developer_events(name):
-    token = _get_token()
+@require_token
+def fetch_developer_events(name, token):
     events = requests.get('{}/{}/{}/received_events'.format(settings.GITHUB_API_URL, 'users', name),
                           headers={'Authorization': 'token {}'.format(token)})
     events.raise_for_status()
     return events.text
 
 
-def _fetch_developer_by_name(name):
-    token = _get_token()
+@require_token
+def _fetch_developer_by_name(name, token):
     developer = requests.get('{}/{}/{}'.format(settings.GITHUB_API_URL, 'users', name),
                              headers={'Authorization': 'token {}'.format(token)})
     developer.raise_for_status()
@@ -49,14 +47,3 @@ def _fetch_developer_by_token(token):
                              headers={'Authorization': 'token {}'.format(token)})
     developer.raise_for_status()
     return developer.text
-
-
-def _get_token():
-    token = request.headers.get('Authorization')
-    if token is None:
-        engine = db.create_database_engine()
-        with DatabaseInitializer(engine) as session:
-            account = session.query(Account).first()
-            return account.token
-    else:
-        return token
