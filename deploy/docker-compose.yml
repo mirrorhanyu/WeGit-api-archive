@@ -1,0 +1,50 @@
+version: "3.7"
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/docker-mount/postgres:/var/lib/postgresql/data
+    networks:
+      - wegit
+    env_file:
+      - docker-compose.env
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.2.0
+    container_name: logstash
+    restart: always
+    ports:
+      - "12201:12201/udp"
+      - "5044:5044"
+    volumes:
+      - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf
+    networks:
+      - wegit
+    environment:
+      - XPACK_MONITORING_ENABLED=false
+
+  gitter-server:
+    image: callmehan/gitter-server:latest
+    container_name: gitter
+    restart: always
+    ports:
+      - "5000:5000"
+    networks:
+      - wegit
+    depends_on:
+      - postgres
+      - logstash
+    env_file:
+      - docker-compose.env
+    logging:
+      driver: gelf
+      options:
+        gelf-address: udp://localhost:12201
+        tag: "gitter-server"
+
+networks:
+  wegit:
