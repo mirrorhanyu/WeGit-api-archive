@@ -1,6 +1,6 @@
-import requests
 from flask import request, Blueprint
 
+from decorators.require_requests_session import require_requests_session
 from decorators.require_token import require_token
 from settings import settings
 
@@ -8,10 +8,11 @@ developer_api = Blueprint('developer', __name__)
 
 
 @developer_api.route('/trending-developers')
-def fetch_trending_developers():
+@require_requests_session
+def fetch_trending_developers(requests_session):
     params = request.url.split(request.url_rule.rule)[1]
-    trending_developers = requests.get('{}/{}/{}'.format(settings.GITHUB_TRENDING_HOST, 'developers', params))
-    trending_developers.raise_for_status()
+    trending_developers = requests_session.get(
+        url='{}/{}/{}'.format(settings.GITHUB_TRENDING_HOST, 'developers', params))
     return trending_developers.text
 
 
@@ -27,23 +28,23 @@ def fetch_developer():
 
 @developer_api.route('/developers/<string:name>/events')
 @require_token
-def fetch_developer_events(name, token):
-    events = requests.get('{}/{}/{}/received_events'.format(settings.GITHUB_API_URL, 'users', name),
-                          headers={'Authorization': 'token {}'.format(token)})
-    events.raise_for_status()
+@require_requests_session
+def fetch_developer_events(name, token, requests_session):
+    events = requests_session.get('{}/{}/{}/received_events'.format(settings.GITHUB_API_URL, 'users', name),
+                                  headers={'Authorization': 'token {}'.format(token)})
     return events.text
 
 
 @require_token
-def _fetch_developer_by_name(name, token):
-    developer = requests.get('{}/{}/{}'.format(settings.GITHUB_API_URL, 'users', name),
-                             headers={'Authorization': 'token {}'.format(token)})
-    developer.raise_for_status()
+@require_requests_session
+def _fetch_developer_by_name(name, token, requests_session):
+    developer = requests_session.get('{}/{}/{}'.format(settings.GITHUB_API_URL, 'users', name),
+                                     headers={'Authorization': 'token {}'.format(token)})
     return developer.text
 
 
-def _fetch_developer_by_token(token):
-    developer = requests.get('{}/{}'.format(settings.GITHUB_API_URL, 'user'),
-                             headers={'Authorization': 'token {}'.format(token)})
-    developer.raise_for_status()
+@require_requests_session
+def _fetch_developer_by_token(token, requests_session):
+    developer = requests_session.get('{}/{}'.format(settings.GITHUB_API_URL, 'user'),
+                                     headers={'Authorization': 'token {}'.format(token)})
     return developer.text

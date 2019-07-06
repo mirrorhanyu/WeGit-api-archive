@@ -1,3 +1,5 @@
+import logging
+
 from flask import Flask
 
 import notifications.alter as alter
@@ -13,6 +15,11 @@ app.register_blueprint(developer_api)
 app.register_blueprint(repository_api)
 app.register_blueprint(language_api)
 app.register_blueprint(search_api)
+
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s %(name)-8s %(levelname)-8s %(message)s')
+requests_logging = logging.getLogger("urllib3")
+requests_logging.setLevel(logging.CRITICAL)
+requests_logging.propagate = False
 
 
 @app.errorhandler(Exception)
