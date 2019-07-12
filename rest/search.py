@@ -11,7 +11,7 @@ search_api = Blueprint('search', __name__)
 @require_token
 @require_requests_session
 def search(token, requests_session):
-    query_repository = request.args.get('repository')
+    query_repository = request.args.get('name')
     repositories = requests_session.get(
         '{}/{}/{}?q={}'.format(settings.GITHUB_API_URL, 'search', 'repositories', query_repository),
         headers={'Authorization': 'token {}'.format(token)})
