@@ -10,9 +10,15 @@ developer_api = Blueprint('developer', __name__)
 @developer_api.route('/trending-developers')
 @require_requests_session
 def fetch_trending_developers(requests_session):
-    params = request.url.split(request.url_rule.rule)[1]
+    since = request.args.get('since')
+    language = request.args.get('language')
+    params = {
+        'since': since,
+        'language': language
+    }
     trending_developers = requests_session.get(
-        url='{}/{}/{}'.format(settings.GITHUB_TRENDING_HOST, 'developers', params))
+        url='{}/{}'.format(settings.GITHUB_TRENDING_HOST, 'developers'), params=params
+    )
     return trending_developers.text
 
 
