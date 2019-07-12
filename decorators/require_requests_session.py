@@ -26,13 +26,13 @@ def raise_for_status(response, *args, **kwargs):
 
 
 def log_request(request):
-    logging.debug('request to: {}, method: {}, headers: {}, data: {}'.format(request.url, request.method,
-                                                                             request.headers,
-                                                                             request.body))
+    logging.info('request to: {}, method: {}, headers: {}, data: {}'.format(request.url, request.method,
+                                                                            request.headers,
+                                                                            request.body))
 
 
 def log_response(response):
-    logging.debug('response from: {}, method: {}, headers: {}, data: {}'.format(response.request.url,
-                                                                                response.request.method,
-                                                                                response.headers,
-                                                                                response.text))
+    logging.info('response from: {}, method: {}, headers: {}, data: {}'.format(response.request.url,
+                                                                               response.request.method,
+                                                                               response.headers,
+                                                                               response.text))

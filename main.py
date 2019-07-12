@@ -1,3 +1,4 @@
+import google.cloud.logging
 import logging
 
 from flask import Flask
@@ -16,7 +17,7 @@ app.register_blueprint(repository_api)
 app.register_blueprint(language_api)
 app.register_blueprint(search_api)
 
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)-15s %(name)-8s %(levelname)-8s %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(message)s')
 requests_logging = logging.getLogger("urllib3")
 requests_logging.setLevel(logging.CRITICAL)
 requests_logging.propagate = False
@@ -35,4 +36,6 @@ def apply_headers_and_status_code(response):
 
 
 if __name__ == '__main__':
+    client = google.cloud.logging.Client()
+    client.setup_logging()
     app.run()
