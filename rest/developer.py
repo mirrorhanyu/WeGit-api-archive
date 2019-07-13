@@ -3,6 +3,7 @@ from flask import request, Blueprint
 from decorators.require_requests_session import require_requests_session
 from decorators.require_token import require_token
 from settings import settings
+from utils.pagination import get_max_page
 
 developer_api = Blueprint('developer', __name__)
 
@@ -38,7 +39,8 @@ def fetch_developer():
 def fetch_developer_events(name, token, requests_session):
     events = requests_session.get('{}/{}/{}/received_events'.format(settings.GITHUB_API_URL, 'users', name),
                                   headers={'Authorization': 'token {}'.format(token)})
-    return events.text
+    headers = {'Max-Page': get_max_page(events.headers.get('Link'))}
+    return events.text, 200, headers
 
 
 @require_token
