@@ -37,8 +37,13 @@ def fetch_developer():
 @require_token
 @require_requests_session
 def fetch_developer_events(name, token, requests_session):
-    events = requests_session.get('{}/{}/{}/received_events'.format(settings.GITHUB_API_URL, 'users', name),
-                                  headers={'Authorization': 'token {}'.format(token)})
+    page = request.args.get('page')
+    params = {
+        'page': page
+    }
+    events = requests_session.get(url='{}/{}/{}/received_events'.format(settings.GITHUB_API_URL, 'users', name),
+                                  headers={'Authorization': 'token {}'.format(token)},
+                                  params=params)
     headers = {'Max-Page': get_max_page(events.headers.get('Link'))}
     return events.text, 200, headers
 

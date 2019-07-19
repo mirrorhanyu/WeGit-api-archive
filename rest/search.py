@@ -1,3 +1,5 @@
+import json
+
 from flask import Blueprint, request
 
 from decorators.require_requests_session import require_requests_session
@@ -12,9 +14,17 @@ search_api = Blueprint('search', __name__)
 @require_token
 @require_requests_session
 def search(token, requests_session):
-    query_repository = request.args.get('name')
-    repositories = requests_session.get(
-        url='{}/{}/{}?q={}'.format(settings.GITHUB_API_URL, 'search', 'repositories', query_repository),
-        headers={'Authorization': 'token {}'.format(token)})
-    headers = {'Max-Page': get_max_page(repositories.headers.get('Link'))}
-    return repositories.text, 200, headers
+    name = request.args.get('name')
+    page = request.args.get('page')
+    params = {
+        'q': name,
+        'page': page
+    }
+    search_result = requests_session.get(
+        url='{}/{}/{}'.format(settings.GITHUB_API_URL, 'search', 'repositories'),
+        headers={'Authorization': 'token {}'.format(token)},
+        params=params
+    )
+    repositories = json.dumps(search_result.json().get('items'))
+    headers = {'Max-Page': get_max_page(search_result.headers.get('Link'))}
+    return repositories, 200, headers
