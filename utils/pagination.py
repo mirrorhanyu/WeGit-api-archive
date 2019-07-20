@@ -1,5 +1,9 @@
 import re
 
 
-def get_max_page(current_page, link_header):
-    return max(re.findall(r'page=([0-9]+)>', link_header) + [current_page], key=int) if link_header else 0
+def get_max_page(link_header):
+    if link_header:
+        max_page_in_header = max([int(number) for number in re.findall(r'page=([0-9]+)>', link_header)])
+        return max_page_in_header if 'rel="last"' in link_header else max_page_in_header + 1
+    else:
+        return 0

@@ -26,5 +26,5 @@ def search(token, requests_session):
         params=params
     )
     repositories = json.dumps(search_result.json().get('items'))
-    headers = {'Max-Page': get_max_page(page, search_result.headers.get('Link'))}
+    headers = {'Max-Page': get_max_page(search_result.headers.get('Link'))}
     return repositories, 200, headers
